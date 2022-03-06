@@ -158,8 +158,6 @@ Plug 'arcticicestudio/nord-vim'
 " Plug 'sonph/onehalf', { 'rtp': 'vim' }
 call plug#end()
 
-colorscheme onehalfdark
-
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256          " Remove this line if not necessary
   source ~/.vimrc_background
