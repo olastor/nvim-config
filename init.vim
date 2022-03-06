@@ -41,12 +41,22 @@ set cursorline
 " coloring
 "#set termguicolors     " enable true colors support
 " let ayucolor="light"  " for light version of theme
-" colorscheme mandevilla
 
 " airline configs
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme='molokai'
+
+let g:coq_settings = { 'auto_start': 'shut-up' }
+
+"set completeopt=menu,menuone,noselect
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
 
 
 " ==============
@@ -80,13 +90,16 @@ nnoremap <C-Left> <esc>:tabprevious<CR>
 inoremap <C-Left> <esc>:tabprevious<CR>
 
 
-nnoremap <leader>n :NERDTreeFocus<CR>
+"nnoremap <leader>n :NERDTreeFocus<CR>
 "nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+nnoremap <C-t> :NvimTreeToggl<CR>
+"nnoremap <C-f> :NERDTreeFind<CR>
 
 nnoremap <C-A-s> :tab vert Git<CR>
 nnoremap <C-A-d> :Gvdiffsplit<CR>
+
+"nnoremap <C-f> :CtrlSF
+inoremap <C-f> <esc>:CtrlSF
 
 
 " ===========
@@ -94,34 +107,55 @@ nnoremap <C-A-d> :Gvdiffsplit<CR>
 " ===========
 
 call plug#begin('~/.vim/plugged')
+
+" fancy start screen
 Plug 'mhinz/vim-startify'
+
+" quick navigation with leader + w or leader + b
 Plug 'easymotion/vim-easymotion'
+
+" nice search
 Plug 'dyng/ctrlsf.vim'
+
+" ctrl+p file search
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'preservim/nerdtree'
-" Plug 'vim-scripts/project'
-" Plug 'Valloric/YouCompleteMe'
-Plug 'chrisbra/Colorizer'
+
+" file tree
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
+
+" fancy status bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+
+" git plugin
 Plug 'tpope/vim-fugitive'
-"Plug 'tpope/vim-surround'
-Plug 'sonph/onehalf', { 'rtp': 'vim' }
+
+" language autocomplete
 Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
+Plug 'ms-jpq/coq_nvim'
+Plug 'ray-x/lsp_signature.nvim'
 
 Plug 'pangloss/vim-javascript'
 " Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 
+" gcc toggle comments
 Plug 'tpope/vim-commentary'
+
+" auto close parentheses
 Plug 'cohama/lexima.vim'
+
+" auto close html tags
 Plug 'alvan/vim-closetag'
 
+" nice colorscheme
+Plug 'arcticicestudio/nord-vim'
+
+" Plug 'vim-scripts/project'
+" Plug 'chrisbra/Colorizer'
+" Plug 'tpope/vim-surround'
+" Plug 'sonph/onehalf', { 'rtp': 'vim' }
 call plug#end()
 
 colorscheme onehalfdark
@@ -131,76 +165,21 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 
-
-set completeopt=menu,menuone,noselect
-
 lua <<EOF
-  -- Setup nvim-cmp.
-  local cmp = require'cmp'
+local lsp = require "lspconfig"
+local coq = require "coq" -- add this
 
-  cmp.setup({
-    snippet = {
-      -- REQUIRED - you must specify a snippet engine
-      expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-      end,
-    },
-    mapping = {
-      ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-      ['<C-e>'] = cmp.mapping({
-        i = cmp.mapping.abort(),
-        c = cmp.mapping.close(),
-      }),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    },
-    sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
-      -- { name = 'luasnip' }, -- For luasnip users.
-      -- { name = 'ultisnips' }, -- For ultisnips users.
-      -- { name = 'snippy' }, -- For snippy users.
-    }, {
-      { name = 'buffer' },
-    })
-  })
+lsp.tsserver.setup{}
+lsp.tsserver.setup(coq.lsp_ensure_capabilities{})
+lsp.pylsp.setup{}
+lsp.pylsp.setup(coq.lsp_ensure_capabilities{})
 
-  -- Set configuration for specific filetype.
-  cmp.setup.filetype('gitcommit', {
-    sources = cmp.config.sources({
-      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it. 
-    }, {
-      { name = 'buffer' },
-    })
-  })
+cfg = {}  -- add you config here
+require "lsp_signature".setup(cfg)
 
-  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-  -- cmp.setup.cmdline('/', {
-  --   sources = {
-  --    { name = 'buffer' }
-  --   }
-  -- })
-
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  -- cmp.setup.cmdline(':', {
-  --  sources = cmp.config.sources({
-  --    { name = 'path' }
-  --  }, {
-  --    { name = 'cmdline' }
-  --  })
-  --})
-
-  -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require'lspconfig'.pylsp.setup{}
-  require'lspconfig'.tsserver.setup{}
+require'nvim-tree'.setup()
 EOF
+
 
 command! DiffHistory call s:view_git_history()
 
@@ -242,3 +221,5 @@ function! s:add_mappings() abort
   wincmd p
 endfunction
 
+colorscheme nord
+nnoremap <C-f> :CtrlSF

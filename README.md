@@ -3,6 +3,9 @@
 todo: lsp server, vimplug cmd
 ```
 git clone https://github.com/olastor/nvim-config ~/.config/nvim
+# install vimplug
+pip install python-lsp-server
+sudo npm install -g typescript-language-server typescript
 ```
 
 aliases
