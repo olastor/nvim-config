@@ -41,6 +41,9 @@ set cursorline
 " coloring
 "#set termguicolors     " enable true colors support
 " let ayucolor="light"  " for light version of theme
+if (has("termguicolors"))
+  set termguicolors
+endif
 
 " airline configs
 let g:airline_powerline_fonts = 1
