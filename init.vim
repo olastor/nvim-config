@@ -47,15 +47,15 @@ endif
 
 " airline configs
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 0
-let g:airline_theme = 'molokai'
+let g:airline_theme = 'solarized'
 let g:coq_settings = { 'auto_start': 'shut-up' }
 
 " The `unique_tail` algorithm will display the tail of the filename, unless
 " there is another file of the same name, in which it will display it along
 " with the containing parent directory.
-" let g:airline#extensions#tabline#formatter = 'unique_tail' " _improved
-" let g:airline#extensions#tabline#show_tab_nr = 0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail' " _improved
+let g:airline#extensions#tabline#show_tab_nr = 0
 
 
 "set completeopt=menu,menuone,noselect
@@ -133,8 +133,8 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 
-" tab bar
-Plug 'romgrk/barbar.nvim'
+" tab bar, modified hidden with nord them
+" Plug 'romgrk/barbar.nvim'
 
 " fancy status bar
 Plug 'vim-airline/vim-airline'
@@ -233,4 +233,10 @@ function! s:add_mappings() abort
 endfunction
 
 colorscheme nord
+
+
+
+
+
+
 nnoremap <C-f> :CtrlSF
