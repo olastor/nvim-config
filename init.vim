@@ -1,4 +1,3 @@
-
 " ============
 " | SETTINGS |
 " ============
@@ -46,17 +45,21 @@ if (has("termguicolors"))
 endif
 
 " airline configs
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'solarized'
+" let g:airline_powerline_fonts = 1
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline_theme='molokai'
+let g:lightline = {
+      \ 'colorscheme': 'iceberg',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead'
+      \ },
+      \ }
+
 let g:coq_settings = { 'auto_start': 'shut-up' }
-
-" The `unique_tail` algorithm will display the tail of the filename, unless
-" there is another file of the same name, in which it will display it along
-" with the containing parent directory.
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail' " _improved
-let g:airline#extensions#tabline#show_tab_nr = 0
-
 
 "set completeopt=menu,menuone,noselect
 augroup mygroup
@@ -98,11 +101,16 @@ inoremap <C-Right> <esc>:tabnext<CR>
 nnoremap <C-Left> <esc>:tabprevious<CR>
 inoremap <C-Left> <esc>:tabprevious<CR>
 
+" file search
+nnoremap <C-p> <Esc>:FZF<CR>
+inoremap <C-p> <Esc>:FZF<CR>
 
 "nnoremap <leader>n :NERDTreeFocus<CR>
 "nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NvimTreeToggl<CR>
+nnoremap <C-e> :NvimTreeToggle<CR>
+nnoremap <C-t> :Ranger<CR>
 "nnoremap <C-f> :NERDTreeFind<CR>
+
 
 nnoremap <C-A-s> :tab vert Git<CR>
 nnoremap <C-A-d> :Gvdiffsplit<CR>
@@ -127,26 +135,30 @@ Plug 'easymotion/vim-easymotion'
 Plug 'dyng/ctrlsf.vim'
 
 " ctrl+p file search
-Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 " file tree
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 
-" tab bar, modified hidden with nord them
-" Plug 'romgrk/barbar.nvim'
-
 " fancy status bar
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
+" Plug 'itchyny/lightline.vim'
+Plug 'nvim-lualine/lualine.nvim'
 
 " git plugin
 Plug 'tpope/vim-fugitive'
 
 " language autocomplete
+" Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lspconfig'
-Plug 'ms-jpq/coq_nvim'
-Plug 'ray-x/lsp_signature.nvim'
+Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+" Plug 'ms-jpq/coq_nvim'
+" Plug 'ray-x/lsp_signature.nvim'
 
 Plug 'pangloss/vim-javascript'
 " Plug 'leafgarland/typescript-vim'
@@ -156,39 +168,103 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'tpope/vim-commentary'
 
 " auto close parentheses
-Plug 'cohama/lexima.vim'
+" Plug 'cohama/lexima.vim'
+Plug 'tpope/vim-surround'
 
 " auto close html tags
-Plug 'alvan/vim-closetag'
+"Plug 'alvan/vim-closetag'
 
-" nice colorscheme
-Plug 'arcticicestudio/nord-vim'
+" better highlighting
+" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+" nice colorschemes
+" Plug 'arcticicestudio/nord-vim'
+" Plug 'NLKNguyen/papercolor-theme'
+Plug 'cocopon/iceberg.vim'
+
+" show current scope 
+" Plug 'SmiteshP/nvim-gps'
+
+Plug 'francoiscabrol/ranger.vim'
+Plug 'rbgrouleff/bclose.vim'
 
 " Plug 'vim-scripts/project'
 " Plug 'chrisbra/Colorizer'
-" Plug 'tpope/vim-surround'
 " Plug 'sonph/onehalf', { 'rtp': 'vim' }
+
+Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
+
+
+Plug 'hashivim/vim-terraform'
 call plug#end()
 
-if filereadable(expand("~/.vimrc_background"))
-  let base16colorspace=256          " Remove this line if not necessary
-  source ~/.vimrc_background
-endif
+" if filereadable(expand("~/.vimrc_background"))
+"   let base16colorspace=256          " Remove this line if not necessary
+"   source ~/.vimrc_background
+" endif
 
+" lua <<EOF
 lua <<EOF
 local lsp = require "lspconfig"
-local coq = require "coq" -- add this
+-- local coq = require "coq" -- add this
 
 lsp.tsserver.setup{}
-lsp.tsserver.setup(coq.lsp_ensure_capabilities{})
 lsp.pylsp.setup{}
-lsp.pylsp.setup(coq.lsp_ensure_capabilities{})
 
-cfg = {}  -- add you config here
-require "lsp_signature".setup(cfg)
+-- cfg = {}  -- add you config here
+-- require "lsp_signature".setup(cfg)
 
-require'nvim-tree'.setup()
-require'nvim-web-devicons'.setup()
+local saga = require 'lspsaga'
+
+-- change the lsp symbol kind
+-- local kind = require('lspsaga.lspkind')
+-- kind[type_number][2] = icon -- see lua/lspsaga/lspkind.lua
+
+-- use default config
+saga.init_lsp_saga()
+
+vim.opt.termguicolors = true
+require("bufferline").setup {
+  options = {
+    offsets = {{filetype = "NvimTree", text = "File Explorer", text_align = "left"}}
+  }
+}
+
+require'nvim-tree'.setup {
+  open_on_setup = true,
+  open_on_setup_file = true,
+  open_on_tab = true
+}
+
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'iceberg',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {},
+    always_divide_middle = true,
+    globalstatus = false,
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = { 'filename' },
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {}
+}
 EOF
 
 
@@ -232,11 +308,29 @@ function! s:add_mappings() abort
   wincmd p
 endfunction
 
-colorscheme nord
 
+" colorscheme based on time
+" if strftime("%H") > 6 && strftime("%H") < 18
+"   set background=light
+" else
+"   set background=dark
+" endif
 
+set background=light " DOT_LIGHTTHEME=on
+command Dark execute "set background=dark"
+command Light execute "set background=light"
 
-
-
-
+colorscheme iceberg
 nnoremap <C-f> :CtrlSF
+
+
+" do not hl current line
+set cursorline!
+
+let g:airline#extensions#wordcount#enabled = 0
+
+command! -bang -nargs=* GGrep
+  \ call fzf#vim#grep(
+  \   'git grep --line-number -- '.shellescape(<q-args>), 0,
+  \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
+

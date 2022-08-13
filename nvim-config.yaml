@@ -1,0 +1,56 @@
+---
+- name: Sync NVIM configuration
+  hosts: localhost
+  connection: local 
+  vars:
+    initial: False
+    nvim_version: v0.7.2
+    nvim_install_path: "$HOME/nvim"
+  tasks:
+    - name: Check if config existing
+      ansible.builtin.stat:
+        path: "$HOME/.config/nvim/init.vim"
+      register: stat1
+
+    - name: Backup old configuration
+      when: stat1.stat.islnk is defined and stat1.stat.islnk == False
+      ansible.builtin.copy:
+        src: "$HOME/.config/nvim/init.vim"
+        dest: "$HOME/.config/nvim/init.vim.{{  ansible_date_time.iso8601_basic }}"
+
+    - name: Make sure config dir exists
+      ansible.builtin.file:
+        dest: "$HOME/.config/nvim"
+        state: directory
+
+    - name: Link configuration
+      ansible.builtin.file:
+        src: "{{ playbook_dir }}/init.vim"
+        dest: "$HOME/.config/nvim/init.vim"
+        state: link
+
+    - name: Install nvim
+      when: initial
+      ansible.builtin.unarchive:
+        url: "https://github.com/neovim/neovim/releases/download/{{ nvim_version }}/nvim-linux64.tar.gz"
+        dest: nvim_install_path
+        remote_src: yes
+
+    - name: Link nvim binary
+      when: initial
+      ansible.builtin.file:
+        src: "{{ nvim_install_path }}/bin/nvim"
+        dest: "$HOME/.local/bin/nvim"
+        state: link
+
+    - name: Install vimplug
+      when: initial
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+        dest: "$HOME/.local/share/nvim/site/autoload/plug.vim"
+
+    - name: Install Plugins
+      command: 'nvim +PlugInstall +qall'
+
+    - name: Update Plugins
+      command: 'nvim +PlugUpdate +qall'
