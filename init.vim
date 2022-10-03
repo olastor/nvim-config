@@ -116,8 +116,7 @@ nnoremap <C-t> :Ranger<CR>
 nnoremap <C-A-s> :tab vert Git<CR>
 nnoremap <C-A-d> :Gvdiffsplit<CR>
 
-"nnoremap <C-f> :CtrlSF
-inoremap <C-f> <esc>:CtrlSF
+nnoremap <C-g> :Grepper<CR>
 
 
 " ===========
@@ -133,11 +132,10 @@ Plug 'mhinz/vim-startify'
 Plug 'easymotion/vim-easymotion'
 
 " nice search
-Plug 'dyng/ctrlsf.vim'
+" Plug 'dyng/ctrlsf.vim'
+Plug 'mhinz/vim-grepper'
 
 " ctrl+p file search
-"Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'junegunn/fzf'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -365,7 +363,6 @@ command Dark execute "set background=dark"
 command Light execute "set background=light"
 
 colorscheme iceberg
-nnoremap <C-f> :CtrlSF
 
 
 " do not hl current line
