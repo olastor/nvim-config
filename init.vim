@@ -1,6 +1,7 @@
 " ============
 " | SETTINGS |
 " ============
+"
 
 " mouse selection
 set mouse=a
@@ -268,8 +269,13 @@ require'nvim-treesitter.configs'.setup {
 
 require'nvim-tree'.setup {
   open_on_setup = true,
-  open_on_setup_file = true,
-  open_on_tab = true
+  open_on_setup_file = false,
+  open_on_tab = true,
+  focus_empty_on_setup = true,
+  ignore_buffer_on_setup = true,
+  git = {
+    ignore = false
+  }
 }
 
 require('lualine').setup {
@@ -352,7 +358,7 @@ endfunction
 "   set background=dark
 " endif
 
-set background=light " DOT_LIGHTTHEME=on
+"set background=light " DOT_LIGHTTHEME=on
 command Dark execute "set background=dark"
 command Light execute "set background=light"
 
