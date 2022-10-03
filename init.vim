@@ -157,7 +157,7 @@ Plug 'tpope/vim-fugitive'
 " language autocomplete
 " Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lspconfig'
-Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+Plug 'glepnir/lspsaga.nvim', { 'branch': 'main', 'commit': 'c8bbcb598e5d63ce927d0f93d2f243532dd602c5' }
 " Plug 'ms-jpq/coq_nvim'
 " Plug 'ray-x/lsp_signature.nvim'
 
@@ -167,6 +167,9 @@ Plug 'peitalin/vim-jsx-typescript'
 
 " gcc toggle comments
 Plug 'tpope/vim-commentary'
+
+" git lense blamer
+Plug 'APZelos/blamer.nvim'
 
 " auto close parentheses
 " Plug 'cohama/lexima.vim'
@@ -204,7 +207,6 @@ call plug#end()
 "   source ~/.vimrc_background
 " endif
 
-" lua <<EOF
 lua <<EOF
 local lsp = require "lspconfig"
 -- local coq = require "coq" -- add this
