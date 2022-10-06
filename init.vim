@@ -115,8 +115,7 @@ nnoremap <C-t> :Ranger<CR>
 nnoremap <C-A-s> :tab vert Git<CR>
 nnoremap <C-A-d> :Gvdiffsplit<CR>
 
-"nnoremap <C-f> :CtrlSF
-inoremap <C-f> <esc>:CtrlSF
+nnoremap <C-g> :Grepper<CR>
 
 
 " ===========
@@ -132,11 +131,10 @@ Plug 'mhinz/vim-startify'
 Plug 'easymotion/vim-easymotion'
 
 " nice search
-Plug 'dyng/ctrlsf.vim'
+" Plug 'dyng/ctrlsf.vim'
+Plug 'mhinz/vim-grepper'
 
 " ctrl+p file search
-"Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'junegunn/fzf'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -156,7 +154,7 @@ Plug 'tpope/vim-fugitive'
 " language autocomplete
 " Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lspconfig'
-Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+Plug 'glepnir/lspsaga.nvim', { 'branch': 'main', 'commit': 'c8bbcb598e5d63ce927d0f93d2f243532dd602c5' }
 " Plug 'ms-jpq/coq_nvim'
 " Plug 'ray-x/lsp_signature.nvim'
 
@@ -167,6 +165,9 @@ Plug 'peitalin/vim-jsx-typescript'
 " gcc toggle comments
 Plug 'tpope/vim-commentary'
 
+" git lense blamer
+Plug 'APZelos/blamer.nvim'
+
 " auto close parentheses
 " Plug 'cohama/lexima.vim'
 Plug 'tpope/vim-surround'
@@ -175,7 +176,7 @@ Plug 'tpope/vim-surround'
 "Plug 'alvan/vim-closetag'
 
 " better highlighting
-" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " nice colorschemes
 " Plug 'arcticicestudio/nord-vim'
@@ -203,7 +204,6 @@ call plug#end()
 "   source ~/.vimrc_background
 " endif
 
-" lua <<EOF
 lua <<EOF
 local lsp = require "lspconfig"
 -- local coq = require "coq" -- add this
@@ -227,6 +227,42 @@ vim.opt.termguicolors = true
 require("bufferline").setup {
   options = {
     offsets = {{filetype = "NvimTree", text = "File Explorer", text_align = "left"}}
+  }
+}
+
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all"
+  ensure_installed = { "c", "lua", "svelte", "typescript", "vim", "yaml", "json", "bash", "bibtex", "dockerfile", "go", "hcl", "html", "javascript", "latex", "make", "markdown", "python" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  auto_install = true,
+
+  -- List of parsers to ignore installing (for "all")
+  ignore_install = {  },
+
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+
+    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+    -- the name of the parser)
+    -- list of language that will be disabled
+    disable = { "c", "rust" },
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+
+  autotag = {
+    enable = true,
+    filetypes = { "html" , "xml", "tsx" },
   }
 }
 
@@ -326,7 +362,6 @@ command Dark execute "set background=dark"
 command Light execute "set background=light"
 
 colorscheme iceberg
-nnoremap <C-f> :CtrlSF
 
 
 " do not hl current line
