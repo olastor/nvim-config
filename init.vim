@@ -104,7 +104,6 @@ inoremap <C-Left> <esc>:tabprevious<CR>
 
 " file search
 nnoremap <C-p> <Esc>:FZF<CR>
-inoremap <C-p> <Esc>:FZF<CR>
 
 "nnoremap <leader>n :NERDTreeFocus<CR>
 "nnoremap <C-n> :NERDTree<CR>
@@ -322,7 +321,7 @@ endfunction
 "   set background=dark
 " endif
 
-"set background=light " DOT_LIGHTTHEME=on
+set background=light " DOT_LIGHTTHEME=on
 command Dark execute "set background=dark"
 command Light execute "set background=light"
 
