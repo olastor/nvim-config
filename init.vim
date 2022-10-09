@@ -119,6 +119,9 @@ nnoremap <C-A-d> :Gvdiffsplit<CR>
 
 nnoremap <C-g> :Grepper<CR>
 
+map  s <Plug>(easymotion-bd-w)
+nmap s <Plug>(easymotion-overwin-w)
+
 
 " ===========
 " | PLUGINS |
@@ -359,7 +362,7 @@ endfunction
 "   set background=dark
 " endif
 
-"set background=light " DOT_LIGHTTHEME=on
+set background=light " DOT_LIGHTTHEME=on
 command Dark execute "set background=dark"
 command Light execute "set background=light"
 
