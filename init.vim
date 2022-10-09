@@ -97,10 +97,12 @@ inoremap <C-x> <Esc>:w<CR>:sus<CR>
 nnoremap <C-n> <esc>:tabnew<CR>
 inoremap <C-n> <esc>:tabnew<CR>
 
-nnoremap <C-Right> <esc>:tabnext<CR>
-inoremap <C-Right> <esc>:tabnext<CR>
-nnoremap <C-Left> <esc>:tabprevious<CR>
-inoremap <C-Left> <esc>:tabprevious<CR>
+nnoremap <C-Right> <esc>:bnext<CR>
+" inoremap <C-Right> <esc>:bnext<CR>
+nnoremap <C-Left> <esc>:bprevious<CR>
+" inoremap <C-Left> <esc>:bprevious<CR>
+nnoremap <C-l> <esc>:bnext<CR>
+nnoremap <C-h> <esc>:bprevious<CR>
 
 " file search
 nnoremap <C-p> <Esc>:FZF<CR>
@@ -357,7 +359,7 @@ endfunction
 "   set background=dark
 " endif
 
-set background=light " DOT_LIGHTTHEME=on
+"set background=light " DOT_LIGHTTHEME=on
 command Dark execute "set background=dark"
 command Light execute "set background=light"
 
