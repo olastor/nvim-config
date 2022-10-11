@@ -94,8 +94,8 @@ nnoremap <C-x> <Esc>:w<CR>:sus<CR>
 inoremap <C-x> <Esc>:w<CR>:sus<CR>
 
 " tabbing
-nnoremap <C-n> <esc>:tabnew<CR>
-inoremap <C-n> <esc>:tabnew<CR>
+nnoremap <C-n> <esc>:enew<CR>
+inoremap <C-n> <esc>:enew<CR>
 
 nnoremap <C-Right> <esc>:bnext<CR>
 " inoremap <C-Right> <esc>:bnext<CR>
